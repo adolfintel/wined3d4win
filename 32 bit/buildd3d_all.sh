@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as superuser"
+   exit 15
+fi
 echo Checking system...
 if [ ! -f /etc/debian_version ]
 then
