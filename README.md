@@ -19,7 +19,7 @@ sh buildd3d_all.sh
 The build process will take some time, at the end, you'll find 2 directories called wined3d and wined3d-staging, which will contain the build DLLs. The staging variant is built using [wine-staging](http://github.com/wine-compholio/wine-staging), which may improve compatibility.
 
 #### Build a specific version of WineD3D
-As far as I know, cross-compiling WineD3D with this method only works since __version 1.6__.
+As far as I know, cross-compiling WineD3D with this method only works since __version 1.6__. The patched version will most likely fail to build unless you're using the latest version of Wine.
 
 All you have to do is download the tarball of the version you want to build, extract it, and run
 ```bash
