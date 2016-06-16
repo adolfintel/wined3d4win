@@ -27,6 +27,9 @@ sh buildd3d_all.sh path_to_extracted_files/
 ```
 The build process will take some time, at the end, you'll find 2 directories called wined3d and wined3d-staging, which will contain the build DLLs. The staging variant is built using [wine-staging](http://github.com/wine-compholio/wine-staging), which may improve compatibility.
 
+## Special thanks ##
+Thanks to Syvat G for improving the patched version to enhance compatibility!
+
 ## Your code is shit!
 Feel free to improve it and send a pull request.
 
