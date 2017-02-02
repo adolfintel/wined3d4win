@@ -1,8 +1,8 @@
 # WineD3D For Windows Build Scripts
-This repository contains the scripts I use to build [WineD3D For Windows](http://wined3d.adolfintel.com).
+This repository contains the scripts I use to build [WineD3D For Windows](http://wined3d.fdossena.com).
 
 ## Download
-You can get prebuilt DLL files from [my website](http://wined3d.adolfintel.com)
+You can get prebuilt DLL files from [my website](http://wined3d.fdossena.com)
 
 __If you're trying to fix an old game, you _must use_ the 32 bit version, even on 64 bit systems.__
 
