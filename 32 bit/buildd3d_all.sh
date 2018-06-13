@@ -92,7 +92,7 @@ cp libs/wine/libwine.dll dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8
 cd ..
 rm -rf wine-tools/* wine-win32/*
 echo Downloading wine-staging...
-git clone https://github.com/wine-compholio/wine-staging.git ./wine-staging
+git clone https://github.com/wine-staging/wine-staging.git ./wine-staging
 if [ $? -ne 0 ]
 then
 	echo Download failed with error $?

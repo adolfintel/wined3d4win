@@ -94,7 +94,7 @@ mkdir ../wined3d
 cp libs/wine/libwine.dll dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d
 cd ..
 echo Downloading wine-staging...
-git clone https://github.com/wine-compholio/wine-staging.git ./wine-staging
+git clone https://github.com/wine-staging/wine-staging.git ./wine-staging
 if [ $? -ne 0 ]
 then
 	echo Download failed with error $?
