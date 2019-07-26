@@ -75,12 +75,13 @@ then
 	exit 4
 fi
 cd ../wine-win32
-../$p/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+../$p/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
 	exit 5
 fi
+make libs/port
 make dlls/wined3d dlls/ddraw dlls/d3d8 dlls/d3d9 dlls/d3d10 dlls/d3d10core dlls/d3d11 dlls/dxgi dlls/d3d10_1
 if [ $? -ne 0 ]
 then
@@ -88,7 +89,7 @@ then
 	exit 6
 fi
 mkdir ../wined3d
-cp libs/wine/libwine.dll dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d
+cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d
 cd ..
 rm -rf wine-tools/* wine-win32/*
 echo Downloading wine-staging...
@@ -124,12 +125,13 @@ then
 	exit 9
 fi
 cd ../wine-win32
-../$p2/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+../$p2/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
 	exit 10
 fi
+make libs/port
 make dlls/wined3d dlls/ddraw dlls/d3d8 dlls/d3d9 dlls/d3d10 dlls/d3d10core dlls/d3d11 dlls/dxgi dlls/d3d10_1
 if [ $? -ne 0 ]
 then
@@ -137,7 +139,7 @@ then
 	exit 11
 fi
 mkdir ../wined3d-staging
-cp libs/wine/libwine.dll dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d-staging
+cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d-staging
 cd ..
 echo Cleaning up...
 rm -rf wine-tools wine-win32 wine-staging wine-git $p2

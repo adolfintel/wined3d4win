@@ -34,7 +34,7 @@ Thanks to Syvat G for improving the patched version to enhance compatibility!
 Feel free to improve it and send a pull request.
 
 ## License
-Copyright (C) 2016 Federico Dossena
+Copyright (C) 2014-2019 Federico Dossena
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
