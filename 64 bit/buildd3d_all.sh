@@ -84,8 +84,7 @@ then
 	echo Wine configure failed with error $?
 	exit 5
 fi
-make libs/port
-make dlls/wined3d dlls/ddraw dlls/d3d8 dlls/d3d9 dlls/d3d10 dlls/d3d10core dlls/d3d11 dlls/dxgi dlls/d3d10_1
+make
 if [ $? -ne 0 ]
 then
 	echo Wine make failed with error $?
@@ -133,8 +132,7 @@ then
 	echo Wine configure failed with error $?
 	exit 10
 fi
-make libs/port
-make dlls/wined3d dlls/ddraw dlls/d3d8 dlls/d3d9 dlls/d3d10 dlls/d3d10core dlls/d3d11 dlls/dxgi dlls/d3d10_1
+make
 if [ $? -ne 0 ]
 then
 	echo Wine make failed with error $?
