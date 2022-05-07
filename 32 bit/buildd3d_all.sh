@@ -75,7 +75,7 @@ then
 	exit 4
 fi
 cd ../wine-win32
-../$p/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+../$p/configure --without-x --disable-kernel32 --disable-tests --without-freetype --host=i686-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
@@ -124,7 +124,7 @@ then
 	exit 9
 fi
 cd ../wine-win32
-../$p2/configure --without-x --without-freetype --host=i686-w64-mingw32 CFLAGS="-O2 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+../$p2/configure --without-x --disable-kernel32 --disable-tests --without-freetype --host=i686-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
