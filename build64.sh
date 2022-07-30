@@ -1,28 +1,5 @@
 #!/bin/bash
-if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as superuser"
-   exit 15
-fi
 echo Checking system...
-if [ ! -f /etc/debian_version ]
-then
-	echo This script requires a Debian system
-	exit 12
-fi
-case $(uname -m) in
-i*86)
-    x86=1
-    ;;
-*)
-    x86=0
-    ;;
-esac
-if [ $x86 -ne 1 ]
-then
-	echo "This script requries an x86 system (i386, i486, i586, i686)"
-	exit 13
-fi
-
 touch test_wined3d
 if [ $? -ne 0 ]
 then
@@ -30,13 +7,6 @@ then
 	exit 14
 fi
 rm -f test_wined3d
-echo Downloading system updates and required dependencies...
-apt-get update -qq -y && apt-get dist-upgrade -qq -y && apt-get build-dep wine -qq -y && apt-get install mingw-w64 git -qq -y && apt-get autoremove -qq -y && apt-get clean -qq -y
-if [ $? -ne 0 ]
-then
-	echo Download failed with error $?
-	exit 1
-fi
 echo Cleaning up...
 unset CC
 rm -rf wine-tools wine-win32 wine-git wine-staging
