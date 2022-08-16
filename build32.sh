@@ -9,8 +9,8 @@ fi
 rm -f test_wined3d
 echo Cleaning up...
 unset CC
-rm -rf wine-tools wine-win64 wine-git wine-staging
-mkdir wine-tools wine-win64
+rm -rf wine-tools wine-win32 wine-git wine-staging
+mkdir wine-tools wine-win32
 if [ -z ${1} ] 
 then
 	echo Downloading wine...
@@ -32,7 +32,7 @@ cp -rf $p"/"* $p2
 echo Building...
 unset CC
 cd wine-tools
-../$p/configure --without-x --enable-win64
+../$p/configure --without-x
 if [ $? -ne 0 ]
 then
 	echo Tools configure failed with error $?
@@ -44,8 +44,8 @@ then
 	echo Tools make failed with error $?
 	exit 4
 fi
-cd ../wine-win64
-../$p/configure --without-x --enable-win64 --disable-kernel32 --disable-tests --without-freetype --host=x86_64-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+cd ../wine-win32
+../$p/configure --without-x --disable-kernel32 --disable-tests --without-freetype --host=i686-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
@@ -60,6 +60,7 @@ fi
 mkdir ../wined3d
 cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d
 cd ..
+rm -rf wine-tools/* wine-win32/*
 echo Downloading wine-staging...
 git clone https://github.com/wine-staging/wine-staging.git ./wine-staging
 if [ $? -ne 0 ]
@@ -80,7 +81,7 @@ cd $p2
 patch -p0 < ../textureHack.patch
 echo Building...
 cd ../wine-tools
-../$p2/configure --without-x --enable-win64
+../$p2/configure --without-x
 if [ $? -ne 0 ]
 then
 	echo Tools configure failed with error $?
@@ -92,8 +93,8 @@ then
 	echo Tools make failed with error $?
 	exit 9
 fi
-cd ../wine-win64
-../$p2/configure --without-x --enable-win64 --disable-kernel32 --disable-tests --without-freetype --host=x86_64-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
+cd ../wine-win32
+../$p2/configure --without-x --disable-kernel32 --disable-tests --without-freetype --host=i686-w64-mingw32 CFLAGS="-O3 -DWINE_NOWINSOCK -DUSE_WIN32_OPENGL -DUSE_WIN32_VULKAN" --with-wine-tools=../wine-tools/ LDFLAGS=" -static-libgcc"
 if [ $? -ne 0 ]
 then
 	echo Wine configure failed with error $?
@@ -109,7 +110,8 @@ mkdir ../wined3d-staging
 cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d-staging
 cd ..
 echo Cleaning up...
-rm -rf wine-tools wine-win64 wine-staging wine-git $p2 textureHack.patch
+rm -rf wine-tools wine-win32 wine-staging wine-git $p2
+rm textureHack.patch
 echo All done with no errors!
 echo The wined3d dlls are in the wined3d and wined3d-staging directories
 exit 0
@@ -130,3 +132,4 @@ M/FED.PHK("`@('T**PH@"B`@("`@:68@*'-R8U]R97-O=7)C92`]/2!D<W1?
 3<F5S;W5R8V4I"B`@("`@>PH*"@``
 `
 end
+
