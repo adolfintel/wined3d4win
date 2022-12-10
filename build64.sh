@@ -7,6 +7,7 @@ then
 	exit 14
 fi
 rm -f test_wined3d
+parallelism=$(grep -c ^processor /proc/cpuinfo)
 echo Cleaning up...
 unset CC
 rm -rf wine-tools wine-win64 wine-git wine-staging
@@ -38,7 +39,7 @@ then
 	echo Tools configure failed with error $?
 	exit 3
 fi
-make __tooldeps__
+make -j$parallelism
 if [ $? -ne 0 ]
 then
 	echo Tools make failed with error $?
@@ -51,7 +52,7 @@ then
 	echo Wine configure failed with error $?
 	exit 5
 fi
-make
+make -j$parallelism
 if [ $? -ne 0 ]
 then
 	echo Wine make failed with error $?
@@ -86,7 +87,7 @@ then
 	echo Tools configure failed with error $?
 	exit 8
 fi
-make __tooldeps__
+make -j$parallelism
 if [ $? -ne 0 ]
 then
 	echo Tools make failed with error $?
@@ -99,7 +100,7 @@ then
 	echo Wine configure failed with error $?
 	exit 10
 fi
-make
+make -j$parallelism
 if [ $? -ne 0 ]
 then
 	echo Wine make failed with error $?
