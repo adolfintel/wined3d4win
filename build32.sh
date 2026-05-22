@@ -59,7 +59,8 @@ then
 	exit 6
 fi
 mkdir ../wined3d
-cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d
+cp dlls/wined3d/i386-windows/wined3d.dll dlls/ddraw/i386-windows/ddraw.dll dlls/d3d8/i386-windows/d3d8.dll dlls/d3d9/i386-windows/d3d9.dll dlls/d3d10/i386-windows/d3d10.dll dlls/d3d10core/i386-windows/d3d10core.dll dlls/d3d11/i386-windows/d3d11.dll dlls/dxgi/i386-windows/dxgi.dll dlls/d3d10_1/i386-windows/d3d10_1.dll ../wined3d
+strip ../wined3d/*.dll
 cd ..
 rm -rf wine-tools/* wine-win32/*
 echo Downloading wine-staging...
@@ -108,7 +109,8 @@ then
 	exit 11
 fi
 mkdir ../wined3d-staging
-cp dlls/wined3d/wined3d.dll dlls/ddraw/ddraw.dll dlls/d3d8/d3d8.dll dlls/d3d9/d3d9.dll dlls/d3d10/d3d10.dll dlls/d3d10core/d3d10core.dll dlls/d3d11/d3d11.dll dlls/dxgi/dxgi.dll dlls/d3d10_1/d3d10_1.dll ../wined3d-staging
+cp dlls/wined3d/i386-windows/wined3d.dll dlls/ddraw/i386-windows/ddraw.dll dlls/d3d8/i386-windows/d3d8.dll dlls/d3d9/i386-windows/d3d9.dll dlls/d3d10/i386-windows/d3d10.dll dlls/d3d10core/i386-windows/d3d10core.dll dlls/d3d11/i386-windows/d3d11.dll dlls/dxgi/i386-windows/dxgi.dll dlls/d3d10_1/i386-windows/d3d10_1.dll ../wined3d-staging
+strip ../wined3d-staging/*.dll
 cd ..
 echo Cleaning up...
 rm -rf wine-tools wine-win32 wine-staging wine-git $p2
