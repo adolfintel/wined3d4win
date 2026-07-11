@@ -73,14 +73,15 @@ fi
 echo Attempting to apply wine-staging...
 cd wine-staging
 rm -rf patches/*CSMT*
-sed 's/exit 1//g' patches/patchinstall.sh > patches/patchinstall1.sh
-chmod 775 patches/patchinstall1.sh
-./patches/patchinstall1.sh DESTDIR="../$p2/" --all
-echo Attempting Typeless Texture Hack...
+python ./staging/patchinstall.py --all -d "../$p2"
+echo Applying additional patches...
 cd ..
-uudecode ${0}
 cd $p2
-patch -p0 < ../textureHack.patch
+if [ -d ../patches ] && [ "$(ls ../patches)" ]; then
+    for f in ../patches/*; do
+        patch -p1 --forward < "$f"
+    done
+fi
 echo Building...
 cd ../wine-tools
 ../$p2/configure --without-x
@@ -114,25 +115,8 @@ strip ../wined3d-staging/*.dll
 cd ..
 echo Cleaning up...
 rm -rf wine-tools wine-win32 wine-staging wine-git $p2
-rm textureHack.patch
 echo All done with no errors!
 echo The wined3d dlls are in the wined3d and wined3d-staging directories
 exit 0
 
-#typeless texture hack from https://github.com/wine-mirror/wine/commit/77539c7716ca88599d7e0532e9e29328a85576f1
-#edited to remove git stuff and unnecessary changes
-begin 755 textureHack.patch
-M+2TM(&1L;',O=VEN960S9"]D979I8V4N8PHK*RL@9&QL<R]W:6YE9#-D+V1E
-M=FEC92YC"D!`("TS-C<V+#8@*S,V-S8L,3$@0$!V;VED($-$14-,('=I;F5D
-M,V1?9&5V:6-E7V-O<'E?<F5S;W5R8V4H<W1R=6-T('=I;F5D,V1?9&5V:6-E
-M("ID979I8V4L"B`@("`@2%)%4U5,5"!H<CL*(`H@("`@(%1204-%*")D979I
-M8V4@)7`L(&1S=%]R97-O=7)C92`E<"P@<W)C7W)E<V]U<F-E("5P+EQN(BP@
-M9&5V:6-E+"!D<W1?<F5S;W5R8V4L('-R8U]R97-O=7)C92D["BL@("`@:68@
-M*&1S=%]R97-O=7)C92T^9F]R;6%T+3YI9"`]/2!724Y%1#-$1DU47U(X1SA"
-M.$$X7U194$5,15-3*0HK("`@('L**R`@("`@("`J*"AI;G0@*BDF*&1S=%]R
-M97-O=7)C92T^9F]R;6%T+3YI9"DI(#T@<W)C7W)E<V]U<F-E+3YF;W)M870M
-M/FED.PHK("`@('T**PH@"B`@("`@:68@*'-R8U]R97-O=7)C92`]/2!D<W1?
-3<F5S;W5R8V4I"B`@("`@>PH*"@``
-`
-end
 
