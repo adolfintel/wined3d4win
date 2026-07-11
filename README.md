@@ -48,10 +48,10 @@ The 64 bit version of WineD3D is only useful to run 64 bit apps on 64 bit Window
 To build 64 bit DLLs, simply replace `build32.sh` in the previous commands with `build64.sh`
 
 ## Special thanks
-Thanks to Syvat G for improving the patched version to enhance compatibility!
+Thanks to [EAZYBLACK](https://t.me/eazyblack) for the Windows 7 compatibility patch.
 
 ## License
-Copyright (C) 2014-2022 Federico Dossena
+Copyright (C) 2014-2026 Federico Dossena
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
