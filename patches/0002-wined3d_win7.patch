@@ -1,0 +1,137 @@
+diff --git a/dlls/wined3d/cs.c b/dlls/wined3d/cs.c
+index 7b17b1d..781829e 100644
+--- a/dlls/wined3d/cs.c
++++ b/dlls/wined3d/cs.c
+@@ -3564,7 +3564,6 @@ static DWORD WINAPI wined3d_cs_run(void *ctx)
+     bool run = true;
+ 
+     TRACE("Started.\n");
+-    SetThreadDescription(GetCurrentThread(), L"wined3d_cs");
+ 
+     /* Copy the module handle to a local variable to avoid racing with the
+      * thread freeing "cs" before the FreeLibraryAndExitThread() call. */
+diff --git a/dlls/wined3d/directx.c b/dlls/wined3d/directx.c
+index 2b67312..f255e09 100644
+--- a/dlls/wined3d/directx.c
++++ b/dlls/wined3d/directx.c
+@@ -1050,6 +1050,8 @@ HRESULT CDECL wined3d_adapter_get_video_memory_info(const struct wined3d_adapter
+         struct wined3d_video_memory_info *info)
+ {
+     static unsigned int once;
++    static BOOL memoryinfo = FALSE;
++    static NTSTATUS (WINAPI *pD3DKMTQueryVideoMemoryInfo)(D3DKMT_QUERYVIDEOMEMORYINFO *) = NULL;
+     D3DKMT_QUERYVIDEOMEMORYINFO query_memory_info;
+     struct wined3d_adapter_identifier adapter_id;
+     NTSTATUS status;
+@@ -1063,20 +1065,30 @@ HRESULT CDECL wined3d_adapter_get_video_memory_info(const struct wined3d_adapter
+         return E_INVALIDARG;
+     }
+ 
+-    query_memory_info.hProcess = NULL;
+-    query_memory_info.hAdapter = adapter->kmt_adapter;
+-    query_memory_info.PhysicalAdapterIndex = node_idx;
+-    query_memory_info.MemorySegmentGroup = (D3DKMT_MEMORY_SEGMENT_GROUP)group;
+-    status = D3DKMTQueryVideoMemoryInfo(&query_memory_info);
+-    if (status == STATUS_SUCCESS)
++    if (!memoryinfo)
+     {
+-        info->budget = query_memory_info.Budget;
+-        info->current_usage = query_memory_info.CurrentUsage;
+-        info->current_reservation = query_memory_info.CurrentReservation;
+-        info->available_reservation = query_memory_info.AvailableForReservation;
+-        return WINED3D_OK;
++        HMODULE gdi32 = LoadLibraryW(L"gdi32.dll");
++        if (gdi32)
++            pD3DKMTQueryVideoMemoryInfo = (void *)GetProcAddress(gdi32, "D3DKMTQueryVideoMemoryInfo");
++        memoryinfo = TRUE;
+     }
+ 
++    if (pD3DKMTQueryVideoMemoryInfo)
++    {
++        query_memory_info.hProcess = NULL;
++        query_memory_info.hAdapter = adapter->kmt_adapter;
++        query_memory_info.PhysicalAdapterIndex = node_idx;
++        query_memory_info.MemorySegmentGroup = (D3DKMT_MEMORY_SEGMENT_GROUP)group;
++        status = pD3DKMTQueryVideoMemoryInfo(&query_memory_info);
++        if (status == STATUS_SUCCESS)
++        {
++            info->budget = query_memory_info.Budget;
++            info->current_usage = query_memory_info.CurrentUsage;
++            info->current_reservation = query_memory_info.CurrentReservation;
++            info->available_reservation = query_memory_info.AvailableForReservation;
++            return WINED3D_OK;
++        }
++    }
+     /* D3DKMTQueryVideoMemoryInfo() failed, fallback to fake memory info */
+     if (!once++)
+         FIXME("Returning fake video memory info.\n");
+@@ -1110,8 +1122,6 @@ static DWORD CALLBACK notification_thread_func(void *stop_event)
+     struct wined3d_video_memory_info info;
+     HRESULT hr;
+ 
+-    SetThreadDescription(GetCurrentThread(), L"wined3d_budget_change_notification");
+-
+     while (TRUE)
+     {
+         wined3d_mutex_lock();
+@@ -3406,10 +3416,11 @@ static BOOL wined3d_adapter_create_output(struct wined3d_adapter *adapter, const
+ BOOL wined3d_adapter_init(struct wined3d_adapter *adapter, unsigned int ordinal, const LUID *luid,
+         const struct wined3d_adapter_ops *adapter_ops)
+ {
+-    D3DKMT_OPENADAPTERFROMLUID open_adapter_desc;
++    D3DKMT_OPENADAPTERFROMHDC open_adapter_desc;
+     unsigned int output_idx = 0, primary_idx = 0;
+     D3DKMT_CLOSEADAPTER close_adapter_desc;
+     DISPLAY_DEVICEW display_device;
++    HDC hdc = NULL;
+     BOOL ret = FALSE;
+ 
+     adapter->ordinal = ordinal;
+@@ -3431,10 +3442,20 @@ BOOL wined3d_adapter_init(struct wined3d_adapter *adapter, unsigned int ordinal,
+     }
+     TRACE("adapter %p LUID %08lx:%08lx.\n", adapter, adapter->luid.HighPart, adapter->luid.LowPart);
+ 
+-    open_adapter_desc.AdapterLuid = adapter->luid;
+-    if (D3DKMTOpenAdapterFromLuid(&open_adapter_desc))
++    hdc = GetDC(NULL);
++    if (!hdc)
+         return FALSE;
++
++    open_adapter_desc.hDc = hdc;
++    if (D3DKMTOpenAdapterFromHdc(&open_adapter_desc))
++    {
++        ReleaseDC(NULL, hdc);
++        return FALSE;
++    }
+     adapter->kmt_adapter = open_adapter_desc.hAdapter;
++    if (!luid)
++        adapter->luid = open_adapter_desc.AdapterLuid;
++    ReleaseDC(NULL, hdc);
+ 
+     display_device.cb = sizeof(display_device);
+     while (EnumDisplayDevicesW(NULL, output_idx++, &display_device, 0))
+diff --git a/dlls/wined3d/swapchain.c b/dlls/wined3d/swapchain.c
+index 0e3cc46..c7513dd 100644
+--- a/dlls/wined3d/swapchain.c
++++ b/dlls/wined3d/swapchain.c
+@@ -2270,7 +2270,6 @@ static void set_window_state(struct wined3d_window_state *s)
+     }
+     else if ((thread = CreateThread(NULL, 0, set_window_state_thread, s, 0, NULL)))
+     {
+-        SetThreadDescription(thread, L"wined3d_set_window_state");
+         CloseHandle(thread);
+     }
+     else
+diff --git a/dlls/wined3d/wined3d_private.h b/dlls/wined3d/wined3d_private.h
+index 934239e..5853a24 100644
+--- a/dlls/wined3d/wined3d_private.h
++++ b/dlls/wined3d/wined3d_private.h
+@@ -4208,7 +4208,7 @@ struct wined3d_shader_limits
+ #define wined3d_lock_init(lock, name) wined3d_lock_init_(lock, __FILE__ ": " name)
+ static inline void wined3d_lock_init_(CRITICAL_SECTION *lock, const char *name)
+ {
+-    InitializeCriticalSectionEx(lock, 0, RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO);
++    InitializeCriticalSectionEx(lock, 0, 0);
+     if (lock->DebugInfo != (RTL_CRITICAL_SECTION_DEBUG *)-1)
+         lock->DebugInfo->Spare[0] = (DWORD_PTR)name;
+ }
